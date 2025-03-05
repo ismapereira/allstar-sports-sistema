@@ -31,7 +31,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 
 interface ProductPriceHistory {
   id: string;
@@ -42,13 +42,11 @@ interface ProductPriceHistory {
 interface Product {
   id: string;
   name: string;
-  sku: string;
   category: string;
   subCategory: string;
   sport: 'Futebol' | 'Basquete';
   description: string;
   price: number;
-  stock: number;
   supplier: string;
   priceHistory: ProductPriceHistory[];
   image?: string;
@@ -59,13 +57,11 @@ const mockProducts: Product[] = [
   {
     id: 'p1',
     name: 'Camisa FAN Barcelona',
-    sku: 'FF-BAR-001',
     category: 'Camisas',
     subCategory: 'FAN Masculina',
     sport: 'Futebol',
     description: 'Camisa versão FAN do FC Barcelona, temporada 2023/2024.',
     price: 199.90,
-    stock: 15,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph1', date: '2023-01-10', price: 189.90 },
@@ -75,13 +71,11 @@ const mockProducts: Product[] = [
   {
     id: 'p2',
     name: 'Camisa FAN Real Madrid',
-    sku: 'FF-RMA-001',
     category: 'Camisas',
     subCategory: 'FAN Feminina',
     sport: 'Futebol',
     description: 'Camisa versão FAN feminina do Real Madrid, temporada 2023/2024.',
     price: 199.90,
-    stock: 12,
     supplier: 'Adidas International',
     priceHistory: [
       { id: 'ph4', date: '2023-01-10', price: 189.90 },
@@ -91,13 +85,11 @@ const mockProducts: Product[] = [
   {
     id: 'p3',
     name: 'Camisa Player Liverpool',
-    sku: 'CP-LIV-001',
     category: 'Camisas',
     subCategory: 'Player',
     sport: 'Futebol',
     description: 'Camisa versão Player do Liverpool, idêntica ao usado pelos jogadores.',
     price: 349.90,
-    stock: 8,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph6', date: '2023-01-10', price: 329.90 },
@@ -107,13 +99,11 @@ const mockProducts: Product[] = [
   {
     id: 'p4',
     name: 'Camisa Retrô Milan 2007',
-    sku: 'CR-MIL-007',
     category: 'Camisas',
     subCategory: 'Retrô',
     sport: 'Futebol',
     description: 'Camisa retrô do Milan campeão da Champions League 2007.',
     price: 249.90,
-    stock: 10,
     supplier: 'Vintage Sports',
     priceHistory: [
       { id: 'ph9', date: '2023-01-15', price: 229.90 },
@@ -123,13 +113,11 @@ const mockProducts: Product[] = [
   {
     id: 'p5',
     name: 'Jersey NBA Lakers',
-    sku: 'JB-LAK-023',
     category: 'Jersey',
     subCategory: 'NBA',
     sport: 'Basquete',
     description: 'Jersey oficial do Los Angeles Lakers, temporada 2023/2024.',
     price: 299.90,
-    stock: 15,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph11', date: '2023-01-10', price: 279.90 },
@@ -148,13 +136,11 @@ const ProductDetails = () => {
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Omit<Product, 'id' | 'priceHistory'>>({
     name: '',
-    sku: '',
     category: '',
     subCategory: '',
     sport: 'Futebol',
     description: '',
     price: 0,
-    stock: 0,
     supplier: ''
   });
   const [newPrice, setNewPrice] = useState<string>('');
@@ -193,13 +179,11 @@ const ProductDetails = () => {
           setProduct(foundProduct);
           setFormData({
             name: foundProduct.name,
-            sku: foundProduct.sku,
             category: foundProduct.category,
             subCategory: foundProduct.subCategory,
             sport: foundProduct.sport,
             description: foundProduct.description,
             price: foundProduct.price,
-            stock: foundProduct.stock,
             supplier: foundProduct.supplier
           });
           setNewPrice(foundProduct.price.toString());
@@ -235,7 +219,7 @@ const ProductDetails = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'stock' ? parseFloat(value) : value
+      [name]: name === 'price' ? parseFloat(value) : value
     }));
   };
 
@@ -394,9 +378,6 @@ const ProductDetails = () => {
               <TabsTrigger value="price-history" className="flex items-center">
                 <BarChart2 size={16} className="mr-2" /> Histórico de Preços
               </TabsTrigger>
-              <TabsTrigger value="inventory" className="flex items-center">
-                <Package size={16} className="mr-2" /> Estoque
-              </TabsTrigger>
               <TabsTrigger value="description" className="flex items-center">
                 <FileText size={16} className="mr-2" /> Descrição
               </TabsTrigger>
@@ -424,16 +405,16 @@ const ProductDetails = () => {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="sku">SKU</Label>
+                      <Label htmlFor="supplier">Fornecedor</Label>
                       {editMode ? (
                         <Input
-                          id="sku"
-                          name="sku"
-                          value={formData.sku}
+                          id="supplier"
+                          name="supplier"
+                          value={formData.supplier}
                           onChange={handleInputChange}
                         />
                       ) : (
-                        <div className="p-2 bg-gray-50 rounded border">{product.sku}</div>
+                        <div className="p-2 bg-gray-50 rounded border">{product.supplier}</div>
                       )}
                     </div>
                   </div>
@@ -513,16 +494,21 @@ const ProductDetails = () => {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="supplier">Fornecedor</Label>
+                      <Label htmlFor="price">Preço atual (R$)</Label>
                       {editMode ? (
                         <Input
-                          id="supplier"
-                          name="supplier"
-                          value={formData.supplier}
+                          id="price"
+                          name="price"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={formData.price}
                           onChange={handleInputChange}
                         />
                       ) : (
-                        <div className="p-2 bg-gray-50 rounded border">{product.supplier}</div>
+                        <div className="p-2 bg-gray-50 rounded border font-medium text-green-600">
+                          {formatCurrency(product.price)}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -610,71 +596,6 @@ const ProductDetails = () => {
               </Card>
             </TabsContent>
             
-            <TabsContent value="inventory">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Informações de Estoque</CardTitle>
-                  <CardDescription>Gerenciamento de estoque do produto</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <Label htmlFor="stock">Quantidade em Estoque</Label>
-                      {editMode ? (
-                        <Input
-                          id="stock"
-                          name="stock"
-                          type="number"
-                          min="0"
-                          value={formData.stock}
-                          onChange={handleInputChange}
-                        />
-                      ) : (
-                        <div className={`text-3xl font-bold ${
-                          product.stock <= 5 ? 'text-red-500' : 
-                          product.stock <= 10 ? 'text-yellow-500' : 
-                          'text-green-500'
-                        }`}>
-                          {product.stock}
-                        </div>
-                      )}
-                      <p className="text-sm text-gray-500">
-                        Status: {' '}
-                        <Badge variant={
-                          product.stock <= 5 ? "destructive" : 
-                          product.stock <= 10 ? "outline" : 
-                          "default"
-                        }>
-                          {product.stock <= 5 ? 'Crítico' : 
-                           product.stock <= 10 ? 'Baixo' : 
-                           'Disponível'}
-                        </Badge>
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-sm font-medium mb-3">Status de Estoque</h4>
-                      <div className="w-full bg-gray-200 rounded-full h-4">
-                        <div
-                          className={`h-4 rounded-full ${
-                            product.stock <= 5 ? 'bg-red-500' : 
-                            product.stock <= 10 ? 'bg-yellow-500' : 
-                            'bg-green-500'
-                          }`}
-                          style={{ width: `${Math.min(product.stock * 5, 100)}%` }}
-                        ></div>
-                      </div>
-                      <div className="mt-2 flex justify-between text-xs text-gray-500">
-                        <span>0</span>
-                        <span>10</span>
-                        <span>20+</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
             <TabsContent value="description">
               <Card>
                 <CardHeader>
@@ -719,10 +640,6 @@ const ProductDetails = () => {
               
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">SKU:</span>
-                  <span className="font-medium">{product.sku}</span>
-                </div>
-                <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Categoria:</span>
                   <span className="font-medium">{product.category}</span>
                 </div>
@@ -733,14 +650,6 @@ const ProductDetails = () => {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Esporte:</span>
                   <span className="font-medium">{product.sport}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Estoque:</span>
-                  <span className={`font-medium ${
-                    product.stock <= 5 ? 'text-red-500' : 
-                    product.stock <= 10 ? 'text-yellow-500' : 
-                    'text-green-500'
-                  }`}>{product.stock} unidades</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Fornecedor:</span>

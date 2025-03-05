@@ -37,13 +37,11 @@ interface ProductPriceHistory {
 interface Product {
   id: string;
   name: string;
-  sku: string;
   category: string;
   subCategory: string;
   sport: 'Futebol' | 'Basquete';
   description: string;
   price: number;
-  stock: number;
   supplier: string;
   priceHistory: ProductPriceHistory[];
   image?: string;
@@ -54,13 +52,11 @@ const mockProducts: Product[] = [
   {
     id: 'p1',
     name: 'Camisa FAN Barcelona',
-    sku: 'FF-BAR-001',
     category: 'Camisas',
     subCategory: 'FAN Masculina',
     sport: 'Futebol',
     description: 'Camisa versão FAN do FC Barcelona, temporada 2023/2024.',
     price: 199.90,
-    stock: 15,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph1', date: '2023-01-10', price: 189.90 },
@@ -70,13 +66,11 @@ const mockProducts: Product[] = [
   {
     id: 'p2',
     name: 'Camisa FAN Real Madrid',
-    sku: 'FF-RMA-001',
     category: 'Camisas',
     subCategory: 'FAN Feminina',
     sport: 'Futebol',
     description: 'Camisa versão FAN feminina do Real Madrid, temporada 2023/2024.',
     price: 199.90,
-    stock: 12,
     supplier: 'Adidas International',
     priceHistory: [
       { id: 'ph4', date: '2023-01-10', price: 189.90 },
@@ -86,13 +80,11 @@ const mockProducts: Product[] = [
   {
     id: 'p3',
     name: 'Camisa Player Liverpool',
-    sku: 'CP-LIV-001',
     category: 'Camisas',
     subCategory: 'Player',
     sport: 'Futebol',
     description: 'Camisa versão Player do Liverpool, idêntica ao usado pelos jogadores.',
     price: 349.90,
-    stock: 8,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph6', date: '2023-01-10', price: 329.90 },
@@ -102,13 +94,11 @@ const mockProducts: Product[] = [
   {
     id: 'p4',
     name: 'Camisa Retrô Milan 2007',
-    sku: 'CR-MIL-007',
     category: 'Camisas',
     subCategory: 'Retrô',
     sport: 'Futebol',
     description: 'Camisa retrô do Milan campeão da Champions League 2007.',
     price: 249.90,
-    stock: 10,
     supplier: 'Vintage Sports',
     priceHistory: [
       { id: 'ph9', date: '2023-01-15', price: 229.90 },
@@ -118,13 +108,11 @@ const mockProducts: Product[] = [
   {
     id: 'p5',
     name: 'Jersey NBA Lakers',
-    sku: 'JB-LAK-023',
     category: 'Jersey',
     subCategory: 'NBA',
     sport: 'Basquete',
     description: 'Jersey oficial do Los Angeles Lakers, temporada 2023/2024.',
     price: 299.90,
-    stock: 15,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph11', date: '2023-01-10', price: 279.90 },
@@ -134,13 +122,11 @@ const mockProducts: Product[] = [
   {
     id: 'p6',
     name: 'Kit Infantil PSG',
-    sku: 'KI-PSG-001',
     category: 'Kit Infantil',
     subCategory: 'Futebol',
     sport: 'Futebol',
     description: 'Kit infantil do Paris Saint-Germain com camisa, shorts e meias.',
     price: 179.90,
-    stock: 20,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph13', date: '2023-02-10', price: 169.90 },
@@ -150,13 +136,11 @@ const mockProducts: Product[] = [
   {
     id: 'p7',
     name: 'Regata Bulls',
-    sku: 'RB-BUL-023',
     category: 'Regatas',
     subCategory: 'NBA',
     sport: 'Basquete',
     description: 'Regata de treino do Chicago Bulls, modelo 2023.',
     price: 159.90,
-    stock: 18,
     supplier: 'Adidas International',
     priceHistory: [
       { id: 'ph15', date: '2023-01-20', price: 149.90 },
@@ -166,13 +150,11 @@ const mockProducts: Product[] = [
   {
     id: 'p8',
     name: 'Shorts Lakers',
-    sku: 'SB-LAK-023',
     category: 'Shorts',
     subCategory: 'NBA',
     sport: 'Basquete',
     description: 'Shorts do Los Angeles Lakers, temporada 2023/2024.',
     price: 149.90,
-    stock: 22,
     supplier: 'Nike International',
     priceHistory: [
       { id: 'ph17', date: '2023-01-15', price: 139.90 },
@@ -193,13 +175,11 @@ const Products = () => {
   const [sortConfig, setSortConfig] = useState<{ key: keyof Product; direction: 'asc' | 'desc' } | null>(null);
   const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'priceHistory'>>({
     name: '',
-    sku: '',
     category: '',
     subCategory: '',
     sport: 'Futebol',
     description: '',
     price: 0,
-    stock: 0,
     supplier: ''
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -219,12 +199,11 @@ const Products = () => {
   useEffect(() => {
     let result = [...products];
     
-    // Filtrar por busca (nome ou SKU)
+    // Filtrar por busca (nome)
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       result = result.filter(product => 
-        product.name.toLowerCase().includes(term) || 
-        product.sku.toLowerCase().includes(term)
+        product.name.toLowerCase().includes(term)
       );
     }
     
@@ -271,13 +250,13 @@ const Products = () => {
     
     setNewProduct(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'stock' ? parseFloat(value) : value
+      [name]: name === 'price' ? parseFloat(value) : value
     }));
   };
 
   const handleAddProduct = async () => {
     // Validação básica
-    if (!newProduct.name || !newProduct.sku || !newProduct.category || !newProduct.price) {
+    if (!newProduct.name || !newProduct.category || !newProduct.price) {
       toast({
         variant: "destructive",
         title: "Erro de validação",
@@ -305,13 +284,11 @@ const Products = () => {
       // Limpar o formulário
       setNewProduct({
         name: '',
-        sku: '',
         category: '',
         subCategory: '',
         sport: 'Futebol',
         description: '',
         price: 0,
-        stock: 0,
         supplier: ''
       });
       
@@ -381,7 +358,7 @@ const Products = () => {
   return (
     <div className="container mx-auto py-6 px-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Gerenciamento de Produtos</h1>
+        <h1 className="text-2xl font-bold">Catálogo de Produtos</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -396,25 +373,14 @@ const Products = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome do Produto*</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={newProduct.name}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sku">SKU*</Label>
-                  <Input
-                    id="sku"
-                    name="sku"
-                    value={newProduct.sku}
-                    onChange={handleInputChange}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome do Produto*</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={newProduct.name}
+                  onChange={handleInputChange}
+                />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -486,30 +452,17 @@ const Products = () => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Preço (R$)*</Label>
-                  <Input
-                    id="price"
-                    name="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={newProduct.price}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="stock">Estoque*</Label>
-                  <Input
-                    id="stock"
-                    name="stock"
-                    type="number"
-                    min="0"
-                    value={newProduct.stock}
-                    onChange={handleInputChange}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="price">Preço (R$)*</Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={newProduct.price}
+                  onChange={handleInputChange}
+                />
               </div>
               
               <div className="space-y-2">
@@ -540,7 +493,7 @@ const Products = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Buscar por nome ou SKU..."
+                placeholder="Buscar por nome do produto..."
                 className="pl-9"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -612,7 +565,6 @@ const Products = () => {
                             )}
                           </Button>
                         </th>
-                        <th className="pb-3 font-medium text-left hidden md:table-cell">SKU</th>
                         <th className="pb-3 font-medium text-left">
                           <Button 
                             variant="ghost" 
@@ -649,18 +601,6 @@ const Products = () => {
                             )}
                           </Button>
                         </th>
-                        <th className="pb-3 font-medium text-right">
-                          <Button 
-                            variant="ghost" 
-                            className="font-medium text-sm"
-                            onClick={() => handleSort('stock')}
-                          >
-                            Estoque
-                            {sortConfig?.key === 'stock' && (
-                              <ArrowUpDown size={16} className="ml-1" />
-                            )}
-                          </Button>
-                        </th>
                         <th className="pb-3 font-medium text-center">Ações</th>
                       </tr>
                     </thead>
@@ -668,7 +608,6 @@ const Products = () => {
                       {filteredProducts.map((product) => (
                         <tr key={product.id} className="border-b hover:bg-gray-50">
                           <td className="py-4">{product.name}</td>
-                          <td className="py-4 hidden md:table-cell">{product.sku}</td>
                           <td className="py-4">
                             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                               {product.category}
@@ -680,11 +619,6 @@ const Products = () => {
                             </Badge>
                           </td>
                           <td className="py-4 text-right">{formatCurrency(product.price)}</td>
-                          <td className="py-4 text-right">
-                            <span className={`font-medium ${product.stock <= 5 ? 'text-red-500' : product.stock <= 10 ? 'text-yellow-500' : 'text-green-500'}`}>
-                              {product.stock}
-                            </span>
-                          </td>
                           <td className="py-4">
                             <div className="flex justify-center gap-2">
                               <Button

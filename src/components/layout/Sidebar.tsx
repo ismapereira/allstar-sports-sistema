@@ -101,7 +101,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
         <div className="mt-6 px-6">
           <div className="bg-secondary-light rounded-lg p-4 text-sm">
             <h4 className="font-medium mb-2">AllStar Sports</h4>
-            <p className="text-white-dark mb-2">Especialista em dropshipping de artigos para:</p>
+            <p className="text-white-dark mb-2">Especialista em produtos para:</p>
             <ul className="list-disc pl-4 text-white-dark">
               <li>Futebol</li>
               <li>Basquete</li>
