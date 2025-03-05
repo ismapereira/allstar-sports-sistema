@@ -1,77 +1,88 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Icons } from '@/components/ui/icons';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
-type RegisterProps = {
+// Definição do esquema de validação
+const registerSchema = z.object({
+  name: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
+  email: z.string().email({ message: 'Email inválido' }),
+  password: z.string().min(6, { message: 'Senha deve ter pelo menos 6 caracteres' }),
+  confirmPassword: z.string()
+}).refine(data => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+});
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export interface RegisterProps {
   setAuthStatus: (status: boolean) => void;
-};
+}
 
 const Register = ({ setAuthStatus }: RegisterProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  // Inicialização do formulário
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // Função de submissão do formulário
+  const onSubmit = async (data: RegisterFormValues) => {
     setLoading(true);
 
-    // Validação simples
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: "Erro na validação",
-        description: "As senhas não coincidem.",
-      });
-      setLoading(false);
-      return;
-    }
-
     try {
-      // Em uma app real, aqui teria uma chamada à API
-      // Simulando uma chamada API com timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Armazenando dados do usuário (em app real, armazene apenas o token JWT)
+      // Em uma app real, aqui faria uma chamada à API
+      // Simulando um delay para o registro
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simulando sucesso do registro
       localStorage.setItem('user', JSON.stringify({ 
-        name: formData.name,
-        email: formData.email, 
-        role: 'user' 
+        name: data.name,
+        email: data.email,
+        role: 'admin',
       }));
       
-      // Atualizando status de autenticação
+      // Atualizar status de autenticação
       setAuthStatus(true);
       
       // Notificação de sucesso
       toast({
-        title: "Conta criada com sucesso",
-        description: "Bem-vindo ao AllStar Sports Hub!",
+        title: "Registro concluído",
+        description: "Sua conta foi criada com sucesso.",
       });
       
-      // Redirecionando para o dashboard
+      // Redirecionar para o dashboard
       navigate('/dashboard');
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Erro no servidor",
-        description: "Ocorreu um erro ao processar sua solicitação.",
+        title: "Erro no registro",
+        description: "Ocorreu um erro ao criar sua conta. Tente novamente.",
       });
     } finally {
       setLoading(false);
@@ -115,108 +126,92 @@ const Register = ({ setAuthStatus }: RegisterProps) => {
           <div className="text-center">
             <h2 className="text-3xl font-bold text-secondary">Criar Conta</h2>
             <p className="mt-2 text-gray-600">
-              Registre-se para acessar o painel de controle
+              Preencha o formulário para criar sua conta
             </p>
           </div>
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome completo</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Seu nome completo"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Seu nome completo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="seu@email.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Senha</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="********" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirmar Senha</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="********" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-primary hover:bg-primary-dark text-white"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <span className="loading-dot"></span>
+                    <span className="loading-dot"></span>
+                    <span className="loading-dot"></span>
+                  </span>
+                ) : "Criar Conta"}
+              </Button>
+            </form>
+          </Form>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Sua senha"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full pr-10"
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar senha</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirme sua senha"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    className="w-full pr-10"
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full bg-primary hover:bg-primary-dark text-white"
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <span className="loading-dot"></span>
-                  <span className="loading-dot"></span>
-                  <span className="loading-dot"></span>
-                </span>
-              ) : "Registrar"}
-            </Button>
-
-            <div className="text-center text-sm">
-              <span className="text-gray-600">Já tem uma conta? </span>
+          <div className="text-center text-sm">
+            <p>
+              Já possui uma conta?{' '}
               <Link to="/login" className="text-primary hover:underline">
                 Faça login
               </Link>
-            </div>
-          </form>
+            </p>
+          </div>
         </div>
       </div>
     </div>
