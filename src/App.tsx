@@ -11,7 +11,6 @@ import MainLayout from "./components/layout/MainLayout";
 
 // Auth Pages
 import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
 // Main Pages
@@ -82,7 +81,6 @@ const App = () => {
             
             {/* Rotas de autenticação */}
             <Route path="/login" element={<Login setAuthStatus={setAuthStatus} />} />
-            <Route path="/register" element={<Register setAuthStatus={setAuthStatus} />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             
             {/* Rotas protegidas */}

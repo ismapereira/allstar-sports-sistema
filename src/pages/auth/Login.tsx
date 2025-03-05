@@ -28,8 +28,9 @@ const Login = ({ setAuthStatus }: LoginProps) => {
       // Simulando uma chamada API com timeout
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Validação simples
-      if (email === 'admin@allstar.com' && password === 'admin123') {
+      // Validação simples para os dois proprietários
+      if ((email === 'proprietario1@allstar.com' && password === 'admin123') || 
+          (email === 'proprietario2@allstar.com' && password === 'admin123')) {
         // Armazenando dados do usuário (em app real, armazene apenas o token JWT)
         localStorage.setItem('user', JSON.stringify({ email, role: 'admin' }));
         
@@ -71,7 +72,7 @@ const Login = ({ setAuthStatus }: LoginProps) => {
           <h1 className="text-4xl font-bold mb-6">AllStar Sports</h1>
           <p className="text-lg mb-8">
             Plataforma de administração para gerenciamento de dropshipping internacional
-            de artigos esportivos.
+            de artigos esportivos de futebol e basquete.
           </p>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center space-x-2">
@@ -161,19 +162,15 @@ const Login = ({ setAuthStatus }: LoginProps) => {
               ) : "Entrar"}
             </Button>
 
-            <div className="text-center text-sm">
-              <span className="text-gray-600">Não tem uma conta? </span>
-              <Link to="/register" className="text-primary hover:underline">
-                Registre-se
-              </Link>
+            <div className="mt-4 text-center text-sm text-gray-500">
+              <p>
+                Credenciais de teste: proprietario1@allstar.com / admin123
+              </p>
+              <p className="mt-1">
+                ou: proprietario2@allstar.com / admin123
+              </p>
             </div>
           </form>
-
-          <div className="mt-4 text-center text-sm text-gray-500">
-            <p>
-              Credenciais de teste: admin@allstar.com / admin123
-            </p>
-          </div>
         </div>
       </div>
     </div>

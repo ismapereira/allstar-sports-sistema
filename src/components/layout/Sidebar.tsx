@@ -97,7 +97,19 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
           ))}
         </nav>
         
-        {/* Rodapé */}
+        {/* Rodapé com informações sobre os esportes */}
+        <div className="mt-6 px-6">
+          <div className="bg-secondary-light rounded-lg p-4 text-sm">
+            <h4 className="font-medium mb-2">AllStar Sports</h4>
+            <p className="text-white-dark mb-2">Especialista em dropshipping de artigos para:</p>
+            <ul className="list-disc pl-4 text-white-dark">
+              <li>Futebol</li>
+              <li>Basquete</li>
+            </ul>
+          </div>
+        </div>
+        
+        {/* Botão de saída */}
         <div className="absolute bottom-0 w-full p-4 border-t border-secondary-light">
           <Link
             to="/login"

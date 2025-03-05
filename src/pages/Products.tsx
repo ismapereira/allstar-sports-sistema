@@ -39,6 +39,8 @@ interface Product {
   name: string;
   sku: string;
   category: string;
+  subCategory: string;
+  sport: 'Futebol' | 'Basquete';
   description: string;
   price: number;
   stock: number;
@@ -47,78 +49,134 @@ interface Product {
   image?: string;
 }
 
-// Mock data - Em uma aplicação real, isso viria de uma API
+// Mock data com os produtos específicos solicitados
 const mockProducts: Product[] = [
   {
     id: 'p1',
-    name: 'Camisa Oficial Barcelona',
-    sku: 'CAM-BAR-001',
+    name: 'Camisa FAN Barcelona',
+    sku: 'FF-BAR-001',
     category: 'Camisas',
-    description: 'Camisa oficial do FC Barcelona, temporada 2023/2024.',
-    price: 249.90,
+    subCategory: 'FAN Masculina',
+    sport: 'Futebol',
+    description: 'Camisa versão FAN do FC Barcelona, temporada 2023/2024.',
+    price: 199.90,
     stock: 15,
     supplier: 'Nike International',
     priceHistory: [
-      { id: 'ph1', date: '2023-01-10', price: 229.90 },
-      { id: 'ph2', date: '2023-04-15', price: 239.90 },
-      { id: 'ph3', date: '2023-06-01', price: 249.90 }
+      { id: 'ph1', date: '2023-01-10', price: 189.90 },
+      { id: 'ph2', date: '2023-04-15', price: 199.90 }
     ]
   },
   {
     id: 'p2',
-    name: 'Camisa Oficial Real Madrid',
-    sku: 'CAM-RMA-001',
+    name: 'Camisa FAN Real Madrid',
+    sku: 'FF-RMA-001',
     category: 'Camisas',
-    description: 'Camisa oficial do Real Madrid, temporada 2023/2024.',
-    price: 249.90,
+    subCategory: 'FAN Feminina',
+    sport: 'Futebol',
+    description: 'Camisa versão FAN feminina do Real Madrid, temporada 2023/2024.',
+    price: 199.90,
     stock: 12,
     supplier: 'Adidas International',
     priceHistory: [
-      { id: 'ph4', date: '2023-01-10', price: 229.90 },
-      { id: 'ph5', date: '2023-04-15', price: 249.90 }
+      { id: 'ph4', date: '2023-01-10', price: 189.90 },
+      { id: 'ph5', date: '2023-04-15', price: 199.90 }
     ]
   },
   {
     id: 'p3',
-    name: 'Bola de Futebol Profissional',
-    sku: 'BOL-PRO-001',
-    category: 'Equipamentos',
-    description: 'Bola de futebol profissional, modelo oficial da Liga dos Campeões da Europa.',
-    price: 179.90,
-    stock: 30,
-    supplier: 'Adidas International',
+    name: 'Camisa Player Liverpool',
+    sku: 'CP-LIV-001',
+    category: 'Camisas',
+    subCategory: 'Player',
+    sport: 'Futebol',
+    description: 'Camisa versão Player do Liverpool, idêntica ao usado pelos jogadores.',
+    price: 349.90,
+    stock: 8,
+    supplier: 'Nike International',
     priceHistory: [
-      { id: 'ph6', date: '2023-01-10', price: 159.90 },
-      { id: 'ph7', date: '2023-03-20', price: 169.90 },
-      { id: 'ph8', date: '2023-05-15', price: 179.90 }
+      { id: 'ph6', date: '2023-01-10', price: 329.90 },
+      { id: 'ph7', date: '2023-03-20', price: 349.90 }
     ]
   },
   {
     id: 'p4',
-    name: 'Chuteira Campo Predator',
-    sku: 'CHU-PRE-001',
-    category: 'Calçados',
-    description: 'Chuteira para campo, modelo Predator, para jogadores profissionais.',
-    price: 399.90,
-    stock: 8,
-    supplier: 'Adidas International',
+    name: 'Camisa Retrô Milan 2007',
+    sku: 'CR-MIL-007',
+    category: 'Camisas',
+    subCategory: 'Retrô',
+    sport: 'Futebol',
+    description: 'Camisa retrô do Milan campeão da Champions League 2007.',
+    price: 249.90,
+    stock: 10,
+    supplier: 'Vintage Sports',
     priceHistory: [
-      { id: 'ph9', date: '2023-01-15', price: 379.90 },
-      { id: 'ph10', date: '2023-04-20', price: 399.90 }
+      { id: 'ph9', date: '2023-01-15', price: 229.90 },
+      { id: 'ph10', date: '2023-04-20', price: 249.90 }
     ]
   },
   {
     id: 'p5',
-    name: 'Meião Profissional',
-    sku: 'MEI-PRO-001',
-    category: 'Acessórios',
-    description: 'Meião profissional para prática de futebol, com tecnologia de absorção de impacto.',
-    price: 39.90,
-    stock: 45,
+    name: 'Jersey NBA Lakers',
+    sku: 'JB-LAK-023',
+    category: 'Jersey',
+    subCategory: 'NBA',
+    sport: 'Basquete',
+    description: 'Jersey oficial do Los Angeles Lakers, temporada 2023/2024.',
+    price: 299.90,
+    stock: 15,
     supplier: 'Nike International',
     priceHistory: [
-      { id: 'ph11', date: '2023-01-10', price: 34.90 },
-      { id: 'ph12', date: '2023-05-01', price: 39.90 }
+      { id: 'ph11', date: '2023-01-10', price: 279.90 },
+      { id: 'ph12', date: '2023-05-01', price: 299.90 }
+    ]
+  },
+  {
+    id: 'p6',
+    name: 'Kit Infantil PSG',
+    sku: 'KI-PSG-001',
+    category: 'Kit Infantil',
+    subCategory: 'Futebol',
+    sport: 'Futebol',
+    description: 'Kit infantil do Paris Saint-Germain com camisa, shorts e meias.',
+    price: 179.90,
+    stock: 20,
+    supplier: 'Nike International',
+    priceHistory: [
+      { id: 'ph13', date: '2023-02-10', price: 169.90 },
+      { id: 'ph14', date: '2023-06-01', price: 179.90 }
+    ]
+  },
+  {
+    id: 'p7',
+    name: 'Regata Bulls',
+    sku: 'RB-BUL-023',
+    category: 'Regatas',
+    subCategory: 'NBA',
+    sport: 'Basquete',
+    description: 'Regata de treino do Chicago Bulls, modelo 2023.',
+    price: 159.90,
+    stock: 18,
+    supplier: 'Adidas International',
+    priceHistory: [
+      { id: 'ph15', date: '2023-01-20', price: 149.90 },
+      { id: 'ph16', date: '2023-05-10', price: 159.90 }
+    ]
+  },
+  {
+    id: 'p8',
+    name: 'Shorts Lakers',
+    sku: 'SB-LAK-023',
+    category: 'Shorts',
+    subCategory: 'NBA',
+    sport: 'Basquete',
+    description: 'Shorts do Los Angeles Lakers, temporada 2023/2024.',
+    price: 149.90,
+    stock: 22,
+    supplier: 'Nike International',
+    priceHistory: [
+      { id: 'ph17', date: '2023-01-15', price: 139.90 },
+      { id: 'ph18', date: '2023-04-15', price: 149.90 }
     ]
   }
 ];
@@ -131,11 +189,14 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('todas');
+  const [sportFilter, setSportFilter] = useState('todos');
   const [sortConfig, setSortConfig] = useState<{ key: keyof Product; direction: 'asc' | 'desc' } | null>(null);
   const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'priceHistory'>>({
     name: '',
     sku: '',
     category: '',
+    subCategory: '',
+    sport: 'Futebol',
     description: '',
     price: 0,
     stock: 0,
@@ -172,6 +233,11 @@ const Products = () => {
       result = result.filter(product => product.category === categoryFilter);
     }
     
+    // Filtrar por esporte
+    if (sportFilter !== 'todos') {
+      result = result.filter(product => product.sport === sportFilter);
+    }
+    
     // Aplicar ordenação
     if (sortConfig) {
       result.sort((a, b) => {
@@ -186,7 +252,7 @@ const Products = () => {
     }
     
     setFilteredProducts(result);
-  }, [products, searchTerm, categoryFilter, sortConfig]);
+  }, [products, searchTerm, categoryFilter, sportFilter, sortConfig]);
 
   const handleSort = (key: keyof Product) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -229,7 +295,7 @@ const Products = () => {
         ...newProduct,
         id: `p${products.length + 1}`,
         priceHistory: [
-          { id: `ph-new-${Date.now()}`, date: new Date().toISOString(), price: newProduct.price }
+          { id: `ph-new-${Date.now()}`, date: new Date().toISOString().split('T')[0], price: newProduct.price }
         ]
       };
       
@@ -241,6 +307,8 @@ const Products = () => {
         name: '',
         sku: '',
         category: '',
+        subCategory: '',
+        sport: 'Futebol',
         description: '',
         price: 0,
         stock: 0,
@@ -290,6 +358,25 @@ const Products = () => {
 
   // Extrair categorias únicas dos produtos
   const categories = ['todas', ...Array.from(new Set(products.map(product => product.category)))];
+  
+  // Opções de categorias de produtos para o formulário
+  const productCategories = [
+    'Camisas',
+    'Jersey',
+    'Kit Infantil',
+    'Regatas',
+    'Shorts'
+  ];
+  
+  // Opções de subcategorias de produtos
+  const productSubCategories = [
+    'FAN Masculina',
+    'FAN Feminina',
+    'Player',
+    'Retrô',
+    'NBA',
+    'Futebol'
+  ];
 
   return (
     <div className="container mx-auto py-6 px-4">
@@ -333,12 +420,60 @@ const Products = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="category">Categoria*</Label>
-                  <Input
-                    id="category"
+                  <Select
                     name="category"
                     value={newProduct.category}
-                    onChange={handleInputChange}
-                  />
+                    onValueChange={(value) => setNewProduct(prev => ({ ...prev, category: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {productCategories.map(category => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="subCategory">Subcategoria*</Label>
+                  <Select
+                    name="subCategory"
+                    value={newProduct.subCategory}
+                    onValueChange={(value) => setNewProduct(prev => ({ ...prev, subCategory: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma subcategoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {productSubCategories.map(subCategory => (
+                        <SelectItem key={subCategory} value={subCategory}>
+                          {subCategory}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sport">Esporte*</Label>
+                  <Select
+                    name="sport"
+                    value={newProduct.sport}
+                    onValueChange={(value) => setNewProduct(prev => ({ ...prev, sport: value as 'Futebol' | 'Basquete' }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um esporte" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Futebol">Futebol</SelectItem>
+                      <SelectItem value="Basquete">Basquete</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="supplier">Fornecedor</Label>
@@ -412,12 +547,12 @@ const Products = () => {
               />
             </div>
             
-            <div className="w-full md:w-64">
+            <div className="w-full md:w-48">
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger>
                   <div className="flex items-center gap-2">
                     <Filter size={18} className="text-gray-400" />
-                    <SelectValue placeholder="Filtrar por categoria" />
+                    <SelectValue placeholder="Categoria" />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
@@ -426,6 +561,22 @@ const Products = () => {
                       {category === 'todas' ? 'Todas as categorias' : category}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="w-full md:w-48">
+              <Select value={sportFilter} onValueChange={setSportFilter}>
+                <SelectTrigger>
+                  <div className="flex items-center gap-2">
+                    <Filter size={18} className="text-gray-400" />
+                    <SelectValue placeholder="Esporte" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os esportes</SelectItem>
+                  <SelectItem value="Futebol">Futebol</SelectItem>
+                  <SelectItem value="Basquete">Basquete</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -461,7 +612,7 @@ const Products = () => {
                             )}
                           </Button>
                         </th>
-                        <th className="pb-3 font-medium text-left">SKU</th>
+                        <th className="pb-3 font-medium text-left hidden md:table-cell">SKU</th>
                         <th className="pb-3 font-medium text-left">
                           <Button 
                             variant="ghost" 
@@ -470,6 +621,18 @@ const Products = () => {
                           >
                             Categoria
                             {sortConfig?.key === 'category' && (
+                              <ArrowUpDown size={16} className="ml-1" />
+                            )}
+                          </Button>
+                        </th>
+                        <th className="pb-3 font-medium text-left hidden md:table-cell">
+                          <Button 
+                            variant="ghost" 
+                            className="font-medium text-sm"
+                            onClick={() => handleSort('sport')}
+                          >
+                            Esporte
+                            {sortConfig?.key === 'sport' && (
                               <ArrowUpDown size={16} className="ml-1" />
                             )}
                           </Button>
@@ -505,10 +668,15 @@ const Products = () => {
                       {filteredProducts.map((product) => (
                         <tr key={product.id} className="border-b hover:bg-gray-50">
                           <td className="py-4">{product.name}</td>
-                          <td className="py-4">{product.sku}</td>
+                          <td className="py-4 hidden md:table-cell">{product.sku}</td>
                           <td className="py-4">
                             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                               {product.category}
+                            </Badge>
+                          </td>
+                          <td className="py-4 hidden md:table-cell">
+                            <Badge variant={product.sport === 'Futebol' ? "default" : "secondary"}>
+                              {product.sport}
                             </Badge>
                           </td>
                           <td className="py-4 text-right">{formatCurrency(product.price)}</td>
