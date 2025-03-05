@@ -24,14 +24,10 @@ const Login = ({ setAuthStatus }: LoginProps) => {
     setLoading(true);
 
     try {
-      // Em uma app real, aqui teria uma chamada à API
-      // Simulando uma chamada API com timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       // Validação simples para os dois proprietários
       if ((email === 'proprietario1@allstar.com' && password === 'admin123') || 
           (email === 'proprietario2@allstar.com' && password === 'admin123')) {
-        // Armazenando dados do usuário (em app real, armazene apenas o token JWT)
+        // Armazenando dados do usuário no localStorage
         localStorage.setItem('user', JSON.stringify({ email, role: 'admin' }));
         
         // Atualizando status de autenticação
@@ -71,8 +67,8 @@ const Login = ({ setAuthStatus }: LoginProps) => {
         <div className="max-w-md text-white p-8 animate-fade-in">
           <h1 className="text-4xl font-bold mb-6">AllStar Sports</h1>
           <p className="text-lg mb-8">
-            Plataforma de administração para gerenciamento de dropshipping internacional
-            de artigos esportivos de futebol e basquete.
+            Plataforma de administração para gerenciamento de produtos
+            esportivos de futebol e basquete.
           </p>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center space-x-2">
@@ -99,7 +95,7 @@ const Login = ({ setAuthStatus }: LoginProps) => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-secondary">Bem-vindo de volta</h2>
+            <h2 className="text-3xl font-bold text-secondary">Bem-vindo</h2>
             <p className="mt-2 text-gray-600">
               Faça login para acessar o painel de controle
             </p>
@@ -123,9 +119,6 @@ const Login = ({ setAuthStatus }: LoginProps) => {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label htmlFor="password">Senha</Label>
-                  <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                    Esqueceu a senha?
-                  </Link>
                 </div>
                 <div className="relative">
                   <Input
@@ -164,7 +157,7 @@ const Login = ({ setAuthStatus }: LoginProps) => {
 
             <div className="mt-4 text-center text-sm text-gray-500">
               <p>
-                Credenciais de teste: proprietario1@allstar.com / admin123
+                Credenciais de acesso: proprietario1@allstar.com / admin123
               </p>
               <p className="mt-1">
                 ou: proprietario2@allstar.com / admin123
