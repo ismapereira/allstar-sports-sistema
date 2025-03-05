@@ -37,13 +37,19 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
           <Menu className="w-6 h-6 text-secondary" />
         </button>
 
-        {/* Título da página atual (visível apenas em desktop) */}
-        <div className="hidden md:block">
-          <h1 className="text-xl font-semibold text-secondary">AllStar Sports</h1>
+        {/* Logo e título da página atual (visível em diferentes dispositivos) */}
+        <div className="flex items-center">
+          <div className="md:hidden">
+            <img 
+              src="/lovable-uploads/77fe372d-aafb-4154-991b-b76d4af34cf5.png" 
+              alt="AllStar Sports Logo" 
+              className="h-8" 
+            />
+          </div>
+          <div className="hidden md:block">
+            <h1 className="text-xl font-semibold text-secondary">AllStar Sports</h1>
+          </div>
         </div>
-
-        {/* Espaço vazio para smartphones */}
-        <div className="md:hidden"></div>
 
         {/* Ações da direita */}
         <div className="flex items-center space-x-3">

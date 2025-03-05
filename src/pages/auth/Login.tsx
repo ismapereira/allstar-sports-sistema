@@ -65,7 +65,13 @@ const Login = ({ setAuthStatus }: LoginProps) => {
       {/* Lado esquerdo - Banner */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-secondary items-center justify-center">
         <div className="max-w-md text-white p-8 animate-fade-in">
-          <h1 className="text-4xl font-bold mb-6">AllStar Sports</h1>
+          <div className="flex justify-center mb-8">
+            <img 
+              src="/lovable-uploads/77fe372d-aafb-4154-991b-b76d4af34cf5.png" 
+              alt="AllStar Sports Logo" 
+              className="h-32" 
+            />
+          </div>
           <p className="text-lg mb-8">
             Plataforma de administração para gerenciamento de produtos
             esportivos de futebol e basquete.
@@ -95,6 +101,13 @@ const Login = ({ setAuthStatus }: LoginProps) => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
           <div className="text-center">
+            <div className="flex justify-center mb-6 lg:hidden">
+              <img 
+                src="/lovable-uploads/77fe372d-aafb-4154-991b-b76d4af34cf5.png" 
+                alt="AllStar Sports Logo" 
+                className="h-24" 
+              />
+            </div>
             <h2 className="text-3xl font-bold text-secondary">Bem-vindo</h2>
             <p className="mt-2 text-gray-600">
               Faça login para acessar o painel de controle

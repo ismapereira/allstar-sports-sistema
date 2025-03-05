@@ -68,7 +68,11 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
         {/* Cabeçalho */}
         <div className="flex items-center justify-between p-4 border-b border-secondary-light">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">AllStar Sports</span>
+            <img 
+              src="/lovable-uploads/77fe372d-aafb-4154-991b-b76d4af34cf5.png" 
+              alt="AllStar Sports Logo" 
+              className="h-10" 
+            />
           </Link>
           <button 
             onClick={() => setOpen(false)}
