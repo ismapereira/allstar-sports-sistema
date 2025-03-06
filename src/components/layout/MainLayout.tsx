@@ -32,11 +32,7 @@ const MainLayout = () => {
       <div className="flex h-screen w-screen items-center justify-center bg-white-dark">
         <div className="text-center">
           <div className="mb-4">
-            <img 
-              src="/lovable-uploads/77fe372d-aafb-4154-991b-b76d4af34cf5.png" 
-              alt="AllStar Sports Logo" 
-              className="h-20 mx-auto" 
-            />
+            <h1 className="text-4xl font-bold text-gradient">AllStar Sports</h1>
           </div>
           <div className="mt-4">
             <span className="loading-dot"></span>
