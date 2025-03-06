@@ -1,7 +1,7 @@
-
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
+import { fetchUserByEmail } from '@/lib/supabase/users';
 import { useToast } from '@/components/ui/use-toast';
 
 // Tipo para o usuário autenticado
@@ -37,19 +37,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         if (session?.user) {
           // Buscar informações adicionais do usuário
-          const { data: userData, error: userError } = await supabase
-            .from('users')
-            .select('id, email, role')
-            .eq('id', session.user.id)
-            .single();
+          const userData = await fetchUserByEmail(session.user.email || '');
 
-          if (userError) throw userError;
-
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            role: userData?.role || 'user',
-          });
+          if (userData) {
+            setUser({
+              id: session.user.id,
+              email: session.user.email || '',
+              role: userData?.role || 'user',
+            });
+          }
         }
       } catch (error) {
         console.error('Erro ao verificar usuário:', error);
@@ -66,19 +62,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (event === 'SIGNED_IN' && session) {
           try {
             // Buscar informações adicionais do usuário
-            const { data: userData, error: userError } = await supabase
-              .from('users')
-              .select('id, email, role')
-              .eq('id', session.user.id)
-              .single();
+            const userData = await fetchUserByEmail(session.user.email || '');
 
-            if (userError) throw userError;
-
-            setUser({
-              id: session.user.id,
-              email: session.user.email || '',
-              role: userData?.role || 'user',
-            });
+            if (userData) {
+              setUser({
+                id: session.user.id,
+                email: session.user.email || '',
+                role: userData?.role || 'user',
+              });
+            }
           } catch (error) {
             console.error('Erro ao buscar dados do usuário:', error);
           }
@@ -106,26 +98,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.user) {
         // Buscar informações adicionais do usuário
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id, email, role')
-          .eq('id', data.user.id)
-          .single();
+        const userData = await fetchUserByEmail(data.user.email || '');
 
-        if (userError) throw userError;
+        if (userData) {
+          setUser({
+            id: data.user.id,
+            email: data.user.email || '',
+            role: userData?.role || 'user',
+          });
 
-        setUser({
-          id: data.user.id,
-          email: data.user.email || '',
-          role: userData?.role || 'user',
-        });
+          toast({
+            title: "Login realizado com sucesso",
+            description: "Bem-vindo ao AllStar Sports Hub!",
+          });
 
-        toast({
-          title: "Login realizado com sucesso",
-          description: "Bem-vindo ao AllStar Sports Hub!",
-        });
-
-        navigate('/dashboard');
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
       console.error('Erro no login:', error);
