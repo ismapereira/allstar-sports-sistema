@@ -1,18 +1,15 @@
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 
-type LoginProps = {
-  setAuthStatus: (status: boolean) => void;
-};
-
-const Login = ({ setAuthStatus }: LoginProps) => {
-  const navigate = useNavigate();
+const Login = () => {
+  const { signIn } = useAuth();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -24,37 +21,9 @@ const Login = ({ setAuthStatus }: LoginProps) => {
     setLoading(true);
 
     try {
-      // Validação simples para os dois proprietários
-      if ((email === 'proprietario1@allstar.com' && password === 'admin123') || 
-          (email === 'proprietario2@allstar.com' && password === 'admin123')) {
-        // Armazenando dados do usuário no localStorage
-        localStorage.setItem('user', JSON.stringify({ email, role: 'admin' }));
-        
-        // Atualizando status de autenticação
-        setAuthStatus(true);
-        
-        // Notificação de sucesso
-        toast({
-          title: "Login realizado com sucesso",
-          description: "Bem-vindo ao AllStar Sports Hub!",
-        });
-        
-        // Redirecionando para o dashboard
-        navigate('/dashboard');
-      } else {
-        // Exibe erro de login
-        toast({
-          variant: "destructive",
-          title: "Erro ao fazer login",
-          description: "Email ou senha incorretos. Tente novamente.",
-        });
-      }
+      await signIn(email, password);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro no servidor",
-        description: "Ocorreu um erro ao processar sua solicitação.",
-      });
+      // Erro já tratado no hook useAuth
     } finally {
       setLoading(false);
     }
@@ -157,10 +126,10 @@ const Login = ({ setAuthStatus }: LoginProps) => {
 
             <div className="mt-4 text-center text-sm text-gray-500">
               <p>
-                Credenciais de acesso: proprietario1@allstar.com / admin123
+                Faça login com seu email e senha cadastrados.
               </p>
               <p className="mt-1">
-                ou: proprietario2@allstar.com / admin123
+                Contate o administrador caso não tenha acesso.
               </p>
             </div>
           </form>

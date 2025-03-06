@@ -10,6 +10,7 @@ import {
   X 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
 
 type SidebarProps = {
   open: boolean;
@@ -18,6 +19,7 @@ type SidebarProps = {
 
 const Sidebar = ({ open, setOpen }: SidebarProps) => {
   const location = useLocation();
+  const { signOut } = useAuth();
   
   const navItems = [
     { 
@@ -46,6 +48,10 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
       icon: <BarChart4 className="w-5 h-5" /> 
     },
   ];
+
+  const handleLogout = async () => {
+    await signOut();
+  };
 
   return (
     <>
@@ -126,13 +132,13 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
         
         {/* Botão de saída */}
         <div className="absolute bottom-0 w-full p-4 border-t border-secondary-light">
-          <Link
-            to="/login"
-            className="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white-dark hover:bg-secondary-light"
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center px-4 py-3 text-sm font-medium rounded-lg text-white-dark hover:bg-secondary-light"
           >
             <LogOut className="w-5 h-5" />
             <span className="ml-3">Sair</span>
-          </Link>
+          </button>
         </div>
       </div>
     </>
