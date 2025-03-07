@@ -1,9 +1,12 @@
 
-// Exportar todas as entidades e funções
+// Re-export client
 export * from './client';
+
+// Re-export types
 export * from './types';
+
+// Re-export entity-specific functions
 export * from './customers';
+export * from './products';
+export * from './orders';
 export * from './users';
-// No futuro podemos adicionar:
-// export * from './products';
-// export * from './orders';
