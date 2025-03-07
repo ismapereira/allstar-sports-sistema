@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/sonner";
 import MainLayout from '@/components/layout/MainLayout';
 import Login from '@/pages/auth/Login';
-import Register from '@/pages/auth/Register';
 import Dashboard from '@/pages/Dashboard';
 import Customers from '@/pages/Customers';
 import CustomerDetails from '@/pages/CustomerDetails';
@@ -49,7 +48,6 @@ function AppRoutes() {
       <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
       
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
       
       <Route path="/" element={
         <ProtectedRoute>

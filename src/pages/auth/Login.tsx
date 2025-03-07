@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -124,14 +123,7 @@ const Login = () => {
               ) : "Entrar"}
             </Button>
 
-            {/* Adicionando link para registro */}
             <div className="mt-4 text-center">
-              <p className="text-sm text-gray-600">
-                Não tem uma conta?{" "}
-                <Link to="/register" className="text-primary hover:underline">
-                  Criar conta
-                </Link>
-              </p>
               <p className="mt-3 text-sm text-gray-500">
                 Contate o administrador caso não tenha acesso.
               </p>
@@ -141,6 +133,6 @@ const Login = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Login;
