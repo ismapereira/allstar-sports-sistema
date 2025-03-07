@@ -124,11 +124,15 @@ const Login = () => {
               ) : "Entrar"}
             </Button>
 
-            <div className="mt-4 text-center text-sm text-gray-500">
-              <p>
-                Faça login com seu email e senha cadastrados.
+            {/* Adicionando link para registro */}
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Não tem uma conta?{" "}
+                <Link to="/register" className="text-primary hover:underline">
+                  Criar conta
+                </Link>
               </p>
-              <p className="mt-1">
+              <p className="mt-3 text-sm text-gray-500">
                 Contate o administrador caso não tenha acesso.
               </p>
             </div>

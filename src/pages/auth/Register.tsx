@@ -1,88 +1,83 @@
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate, Link } from 'react-router-dom';
+import { User, UserCredential } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Icons } from '@/components/ui/icons';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { createUser } from '@/lib/supabase/users';
 
-// Definição do esquema de validação
-const registerSchema = z.object({
-  name: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
-  email: z.string().email({ message: 'Email inválido' }),
-  password: z.string().min(6, { message: 'Senha deve ter pelo menos 6 caracteres' }),
-  confirmPassword: z.string()
-}).refine(data => data.password === data.confirmPassword, {
-  message: "As senhas não coincidem",
-  path: ["confirmPassword"],
-});
-
-type RegisterFormValues = z.infer<typeof registerSchema>;
-
-export interface RegisterProps {
-  setAuthStatus: (status: boolean) => void;
-}
-
-const Register = ({ setAuthStatus }: RegisterProps) => {
+const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-
-  // Inicialização do formulário
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
 
-  // Função de submissão do formulário
-  const onSubmit = async (data: RegisterFormValues) => {
-    setLoading(true);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-    try {
-      // Em uma app real, aqui faria uma chamada à API
-      // Simulando um delay para o registro
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simulando sucesso do registro
-      localStorage.setItem('user', JSON.stringify({ 
-        name: data.name,
-        email: data.email,
-        role: 'admin',
-      }));
-      
-      // Atualizar status de autenticação
-      setAuthStatus(true);
-      
-      // Notificação de sucesso
-      toast({
-        title: "Registro concluído",
-        description: "Sua conta foi criada com sucesso.",
-      });
-      
-      // Redirecionar para o dashboard
-      navigate('/dashboard');
-    } catch (error) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // Validações básicas
+    if (formData.password !== formData.confirmPassword) {
       toast({
         variant: "destructive",
-        title: "Erro no registro",
-        description: "Ocorreu um erro ao criar sua conta. Tente novamente.",
+        title: "As senhas não coincidem",
+        description: "Por favor, verifique se as senhas são idênticas",
+      });
+      return;
+    }
+    
+    if (formData.password.length < 6) {
+      toast({
+        variant: "destructive",
+        title: "Senha muito curta",
+        description: "A senha deve ter pelo menos 6 caracteres",
+      });
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      // Criar usuário no Supabase
+      await createUser({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: 'staff', // Papel padrão para novos usuários
+      });
+      
+      toast({
+        title: "Usuário criado com sucesso!",
+        description: "Você já pode fazer login no sistema.",
+      });
+      
+      // Redireciona para o login
+      navigate('/login');
+    } catch (error: any) {
+      console.error('Erro ao registrar:', error);
+      
+      let errorMessage = "Ocorreu um erro ao criar sua conta.";
+      if (error.message) {
+        if (error.message.includes("Email already registered")) {
+          errorMessage = "Este email já está registrado.";
+        }
+      }
+      
+      toast({
+        variant: "destructive",
+        title: "Erro ao criar usuário",
+        description: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -93,11 +88,10 @@ const Register = ({ setAuthStatus }: RegisterProps) => {
     <div className="flex min-h-screen bg-white-dark">
       {/* Lado esquerdo - Banner */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-secondary items-center justify-center">
-        <div className="max-w-md text-white p-8 animate-fade-in">
+        <div className="max-w-md text-white p-8">
           <h1 className="text-4xl font-bold mb-6">AllStar Sports</h1>
           <p className="text-lg mb-8">
-            Plataforma de administração para gerenciamento de dropshipping internacional
-            de artigos esportivos.
+            Crie sua conta para gerenciar produtos esportivos.
           </p>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center space-x-2">
@@ -122,96 +116,96 @@ const Register = ({ setAuthStatus }: RegisterProps) => {
 
       {/* Lado direito - Formulário de registro */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8 animate-fade-in">
+        <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-secondary">Criar Conta</h2>
             <p className="mt-2 text-gray-600">
-              Preencha o formulário para criar sua conta
+              Preencha os dados abaixo para se registrar
             </p>
           </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Seu nome completo" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="seu@email.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Senha</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="********" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirmar Senha</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="********" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome completo</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Seu nome completo"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full"
+                />
+              </div>
 
-              <Button 
-                type="submit" 
-                className="w-full bg-primary hover:bg-primary-dark text-white"
-                disabled={loading}
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <span className="loading-dot"></span>
-                    <span className="loading-dot"></span>
-                    <span className="loading-dot"></span>
-                  </span>
-                ) : "Criar Conta"}
-              </Button>
-            </form>
-          </Form>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full"
+                />
+              </div>
 
-          <div className="text-center text-sm">
-            <p>
-              Já possui uma conta?{' '}
-              <Link to="/login" className="text-primary hover:underline">
-                Faça login
-              </Link>
-            </p>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Sua senha"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar senha</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirme sua senha"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full bg-primary hover:bg-primary-dark text-white"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <span className="loading-dot"></span>
+                  <span className="loading-dot"></span>
+                  <span className="loading-dot"></span>
+                </span>
+              ) : "Criar conta"}
+            </Button>
+
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Já tem uma conta?{" "}
+                <Link to="/login" className="text-primary hover:underline">
+                  Faça login
+                </Link>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
     </div>
