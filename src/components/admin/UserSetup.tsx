@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { createAdminUser, createTestUsers } from '@/lib/supabase/setup';
+import { createUser } from '@/lib/supabase/users';
 
 const UserSetup = () => {
   const [loading, setLoading] = useState(false);
@@ -12,7 +12,13 @@ const UserSetup = () => {
   const handleCreateAdmin = async () => {
     setLoading(true);
     try {
-      const result = await createAdminUser();
+      const result = await createUser({
+        email: 'admin@allstar.com',
+        password: 'Admin@123',
+        name: 'Administrador',
+        role: 'admin'
+      });
+      
       if (result) {
         toast.success('Usuário admin criado com sucesso');
         setResults([{ type: 'admin', data: result, success: true }]);
@@ -20,9 +26,9 @@ const UserSetup = () => {
         toast.error('Erro ao criar usuário admin');
         setResults([{ type: 'admin', success: false }]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro:', error);
-      toast.error('Erro ao criar usuário admin');
+      toast.error('Erro ao criar usuário admin: ' + (error.message || 'Erro desconhecido'));
       setResults([{ type: 'admin', error, success: false }]);
     } finally {
       setLoading(false);
@@ -31,8 +37,55 @@ const UserSetup = () => {
   
   const handleCreateTestUsers = async () => {
     setLoading(true);
+    const results = [];
+    
     try {
-      const results = await createTestUsers();
+      // Criar usuário gerente
+      try {
+        const manager = await createUser({
+          email: 'gerente@allstar.com',
+          password: 'Gerente@123',
+          name: 'Gerente Teste',
+          role: 'manager'
+        });
+        
+        results.push({ 
+          email: 'gerente@allstar.com', 
+          success: true, 
+          data: manager 
+        });
+      } catch (error: any) {
+        console.error('Erro ao criar gerente:', error);
+        results.push({ 
+          email: 'gerente@allstar.com', 
+          success: false, 
+          error: error.message || 'Erro desconhecido' 
+        });
+      }
+      
+      // Criar usuário vendedor
+      try {
+        const staff = await createUser({
+          email: 'vendedor@allstar.com',
+          password: 'Vendedor@123',
+          name: 'Vendedor Teste',
+          role: 'staff'
+        });
+        
+        results.push({ 
+          email: 'vendedor@allstar.com', 
+          success: true, 
+          data: staff 
+        });
+      } catch (error: any) {
+        console.error('Erro ao criar vendedor:', error);
+        results.push({ 
+          email: 'vendedor@allstar.com', 
+          success: false, 
+          error: error.message || 'Erro desconhecido' 
+        });
+      }
+      
       const success = results.some(r => r.success);
       
       if (success) {

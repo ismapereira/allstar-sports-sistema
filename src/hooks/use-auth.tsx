@@ -4,14 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase/client';
 import { fetchUserByEmail } from '@/lib/supabase/users';
 import { toast } from "sonner";
-
-// Tipo para o usuário autenticado
-type User = {
-  id: string;
-  email: string;
-  name?: string;
-  role?: string;
-};
+import type { User } from '@/lib/supabase/types';
 
 // Tipo para o contexto de autenticação
 type AuthContextType = {
@@ -41,12 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const userData = await fetchUserByEmail(session.user.email || '');
 
           if (userData) {
-            setUser({
-              id: session.user.id,
-              email: session.user.email || '',
-              name: userData.name,
-              role: userData?.role || 'user',
-            });
+            setUser(userData);
           }
         }
       } catch (error) {
@@ -67,15 +55,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const userData = await fetchUserByEmail(session.user.email || '');
 
             if (userData) {
-              setUser({
-                id: session.user.id,
-                email: session.user.email || '',
-                name: userData.name,
-                role: userData?.role || 'user',
-              });
+              setUser(userData);
             }
           } catch (error) {
             console.error('Erro ao buscar dados do usuário:', error);
+          } finally {
+            setLoading(false);
           }
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
@@ -104,12 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const userData = await fetchUserByEmail(data.user.email || '');
 
         if (userData) {
-          setUser({
-            id: data.user.id,
-            email: data.user.email || '',
-            name: userData.name,
-            role: userData?.role || 'user',
-          });
+          setUser(userData);
 
           toast.success("Login realizado com sucesso", {
             description: "Bem-vindo ao AllStar Sports Hub!",
