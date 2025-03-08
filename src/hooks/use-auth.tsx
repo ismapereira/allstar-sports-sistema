@@ -1,13 +1,15 @@
+
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase/client';
 import { fetchUserByEmail } from '@/lib/supabase/users';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from "sonner";
 
 // Tipo para o usuário autenticado
 type User = {
   id: string;
   email: string;
+  name?: string;
   role?: string;
 };
 
@@ -27,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
     // Verificar se há um usuário na sessão do Supabase
@@ -43,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser({
               id: session.user.id,
               email: session.user.email || '',
+              name: userData.name,
               role: userData?.role || 'user',
             });
           }
@@ -68,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               setUser({
                 id: session.user.id,
                 email: session.user.email || '',
+                name: userData.name,
                 role: userData?.role || 'user',
               });
             }
@@ -104,23 +107,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser({
             id: data.user.id,
             email: data.user.email || '',
+            name: userData.name,
             role: userData?.role || 'user',
           });
 
-          toast({
-            title: "Login realizado com sucesso",
+          toast.success("Login realizado com sucesso", {
             description: "Bem-vindo ao AllStar Sports Hub!",
           });
 
           navigate('/dashboard');
+        } else {
+          // O usuário existe na auth mas não na tabela users
+          console.error('Usuário autenticado, mas não encontrado na tabela users');
+          toast.error("Erro ao fazer login", {
+            description: "Conta de usuário incompleta. Contate o administrador.",
+          });
+          
+          // Fazer logout
+          await supabase.auth.signOut();
+          throw new Error('Usuário não encontrado na tabela users');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro no login:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao fazer login",
-        description: "Email ou senha incorretos. Tente novamente.",
+      toast.error("Erro ao fazer login", {
+        description: error.message || "Email ou senha incorretos. Tente novamente.",
       });
       throw error;
     }
@@ -133,12 +144,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       
       setUser(null);
+      toast.success("Logout realizado com sucesso");
       navigate('/login');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao sair",
+      toast.error("Erro ao sair", {
         description: "Ocorreu um erro ao tentar sair da sua conta.",
       });
     }

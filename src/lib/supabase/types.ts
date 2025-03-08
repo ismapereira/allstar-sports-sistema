@@ -1,63 +1,84 @@
 
+export type User = {
+  id: string;
+  email: string;
+  name?: string;
+  role?: 'admin' | 'manager' | 'staff';
+  created_at?: string;
+  updated_at?: string;
+  is_active?: boolean;
+};
+
 export type Customer = {
   id: string;
   name: string;
   email: string;
-  phone: string;
-  city: string;
-  state: string;
+  phone?: string;
   address?: string;
-  postal_code?: string;
-  country?: string;
-  notes?: string;
-  created_at: string;
-  last_purchase_date?: string;
-  total_purchases: number;
-}
+  city?: string;
+  state?: string;
+  zip?: string;
+  created_at?: string;
+  updated_at?: string;
+  total_orders?: number;
+  total_spent?: number;
+  last_order_date?: string;
+  status?: 'active' | 'inactive';
+};
 
 export type Product = {
   id: string;
   name: string;
   description?: string;
   price: number;
-  category: string;
-  stock: number;
+  cost_price?: number;
+  category: 'futebol' | 'basquete' | 'acessorios';
+  subcategory?: string;
+  sku: string;
+  stock_quantity: number;
+  min_stock_quantity?: number;
   image_url?: string;
-  created_at: string;
-  is_active: boolean;
-}
+  created_at?: string;
+  updated_at?: string;
+  status: 'active' | 'inactive';
+  featured?: boolean;
+  discount_percent?: number;
+  brand?: string;
+  size?: string;
+  color?: string;
+  weight?: number;
+  dimensions?: string;
+};
 
 export type Order = {
   id: string;
   customer_id: string;
-  status: 'Pendente' | 'Em processamento' | 'Enviado' | 'Entregue' | 'Cancelado';
-  created_at: string;
+  customer?: Customer;
+  order_date: string;
+  status: 'pendente' | 'aprovado' | 'enviado' | 'entregue' | 'cancelado';
+  payment_status: 'pendente' | 'pago' | 'reembolsado';
+  payment_method?: 'credito' | 'debito' | 'pix' | 'boleto' | 'dinheiro';
+  shipping_method?: string;
+  shipping_cost?: number;
+  tracking_code?: string;
+  subtotal: number;
+  discount?: number;
+  tax?: number;
   total: number;
-  shipping_method: string;
-  shipping_address?: string;
-  shipping_city?: string;
-  shipping_state?: string;
-  shipping_postal_code?: string;
-  shipping_country?: string;
-  payment_method: string;
   notes?: string;
-}
+  created_at?: string;
+  updated_at?: string;
+  items?: OrderItem[];
+};
 
 export type OrderItem = {
   id: string;
   order_id: string;
   product_id: string;
+  product?: Product;
   quantity: number;
-  price: number;
-}
-
-export type User = {
-  id: string;
-  email: string;
-  name?: string;
-  role: 'admin' | 'manager' | 'staff';
-  created_at: string;
-  last_sign_in?: string;
-  avatar_url?: string;
-  is_active: boolean;
-}
+  unit_price: number;
+  subtotal: number;
+  discount?: number;
+  notes?: string;
+};

@@ -46,6 +46,37 @@ export async function fetchUserByEmail(email: string) {
   return data;
 }
 
+export async function getCurrentUser() {
+  try {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error('Erro ao obter sessão:', sessionError);
+      return null;
+    }
+    
+    if (!sessionData.session?.user) {
+      return null;
+    }
+    
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', sessionData.session.user.id)
+      .single();
+      
+    if (error) {
+      console.error('Erro ao buscar usuário atual:', error);
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Erro ao obter usuário atual:', error);
+    return null;
+  }
+}
+
 export async function createUser(userData: {
   email: string;
   password: string;
@@ -67,22 +98,26 @@ export async function createUser(userData: {
     throw new Error('Erro ao criar usuário: dados do usuário não retornados');
   }
   
-  // Depois, inserir os dados complementares na tabela users
-  // Para inserir na tabela users, precisamos usar o service_role key no backend
-  // ou configurar RLS policies adequadas. Aqui, vamos apenas simular o processo:
-  console.log(`Usuário ${userData.email} criado com sucesso no Auth!`);
-  console.log(`ID do usuário: ${authData.user.id}`);
-  console.log(`Para completar o cadastro, insira manualmente no banco de dados ou configure RLS adequadamente:`);
-  console.log({
-    id: authData.user.id,
-    email: userData.email,
-    name: userData.name || '',
-    role: userData.role || 'staff',
-    created_at: new Date().toISOString(),
-    is_active: true,
-  });
+  // Inserir dados na tabela users
+  const { data, error } = await supabase
+    .from('users')
+    .insert([
+      {
+        id: authData.user.id,
+        email: userData.email,
+        name: userData.name || '',
+        role: userData.role || 'staff',
+        is_active: true
+      }
+    ])
+    .select();
   
-  return authData.user;
+  if (error) {
+    console.error('Erro ao inserir dados do usuário:', error);
+    throw error;
+  }
+  
+  return data?.[0];
 }
 
 export async function updateUser(id: string, userData: Partial<User>) {
@@ -128,56 +163,4 @@ export async function deactivateUser(id: string) {
   }
   
   return data?.[0];
-}
-
-// Função auxiliar para criar usuário diretamente através do console
-export async function createAdminUser() {
-  const adminData = {
-    email: 'admin@allstar.com',
-    password: 'Admin@123',
-    name: 'Administrador',
-    role: 'admin' as const,
-  };
-  
-  try {
-    const user = await createUser(adminData);
-    console.log('Usuário admin criado com sucesso:', user);
-    return user;
-  } catch (error) {
-    console.error('Erro ao criar usuário admin:', error);
-    throw error;
-  }
-}
-
-// Outras funções úteis para gerenciamento de usuários
-export async function createTestUsers() {
-  const users = [
-    {
-      email: 'gerente@allstar.com',
-      password: 'Gerente@123',
-      name: 'Gerente Teste',
-      role: 'manager' as const,
-    },
-    {
-      email: 'vendedor@allstar.com',
-      password: 'Vendedor@123',
-      name: 'Vendedor Teste',
-      role: 'staff' as const,
-    }
-  ];
-  
-  const results = [];
-  
-  for (const userData of users) {
-    try {
-      const user = await createUser(userData);
-      console.log(`Usuário ${userData.email} criado com sucesso:`, user);
-      results.push({ success: true, user });
-    } catch (error) {
-      console.error(`Erro ao criar usuário ${userData.email}:`, error);
-      results.push({ success: false, error });
-    }
-  }
-  
-  return results;
 }

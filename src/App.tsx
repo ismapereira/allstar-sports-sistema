@@ -1,7 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 import MainLayout from '@/components/layout/MainLayout';
 import Login from '@/pages/auth/Login';
 import Dashboard from '@/pages/Dashboard';
@@ -13,6 +13,7 @@ import Orders from '@/pages/Orders';
 import OrderDetails from '@/pages/OrderDetails';
 import Finance from '@/pages/Finance';
 import NotFound from '@/pages/NotFound';
+import Setup from '@/pages/admin/Setup';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
 import './App.css';
 
@@ -40,6 +41,30 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return user ? <>{children}</> : <Navigate to="/login" />;
 };
 
+// Componente para proteger rotas de admin
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-white-dark">
+        <div className="text-center">
+          <div className="mb-4">
+            <h1 className="text-4xl font-bold text-gradient">AllStar Sports</h1>
+          </div>
+          <div className="mt-4">
+            <span className="loading-dot"></span>
+            <span className="loading-dot"></span>
+            <span className="loading-dot"></span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  return user && user.role === 'admin' ? <>{children}</> : <Navigate to="/dashboard" />;
+};
+
 function AppRoutes() {
   const { user } = useAuth();
 
@@ -48,6 +73,9 @@ function AppRoutes() {
       <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
       
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+      
+      {/* Rota de setup - pode ser acessada sem login */}
+      <Route path="/setup" element={<Setup />} />
       
       <Route path="/" element={
         <ProtectedRoute>
@@ -62,6 +90,18 @@ function AppRoutes() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/:id" element={<OrderDetails />} />
         <Route path="/finance" element={<Finance />} />
+        
+        {/* Rotas administrativas */}
+        <Route path="/admin" element={
+          <AdminRoute>
+            <Navigate to="/admin/setup" />
+          </AdminRoute>
+        } />
+        <Route path="/admin/setup" element={
+          <AdminRoute>
+            <Setup />
+          </AdminRoute>
+        } />
       </Route>
       
       <Route path="*" element={<NotFound />} />
